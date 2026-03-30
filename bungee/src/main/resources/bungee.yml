@@ -1,0 +1,4 @@
+name: ReportSystemBungee
+main: de.interwebmedia.report.bungee.ReportBungeePlugin
+version: 1.0.0
+author: Interwebmedia
