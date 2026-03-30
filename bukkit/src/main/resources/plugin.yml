@@ -1,0 +1,15 @@
+name: ReportSystem
+version: 1.0.0
+main: de.interwebmedia.report.bukkit.ReportBukkitPlugin
+api-version: '1.21'
+commands:
+  report:
+    description: Create and manage reports
+    usage: /report [player]
+  reports:
+    description: Opens moderation report management
+    usage: /reports
+permissions:
+  report.admin:
+    description: Access to report administration
+    default: op
