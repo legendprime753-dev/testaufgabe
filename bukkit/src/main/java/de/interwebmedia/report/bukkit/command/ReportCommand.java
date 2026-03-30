@@ -5,6 +5,7 @@ import de.interwebmedia.report.api.model.PlayerEdition;
 import de.interwebmedia.report.api.model.ReportTemplate;
 import de.interwebmedia.report.api.service.ReportService;
 import de.interwebmedia.report.api.service.UuidLookupService;
+import java.util.Locale;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -33,14 +34,17 @@ public class ReportCommand implements CommandExecutor {
         }
 
         if (args.length == 0) {
-            reporter.sendMessage("GUI-Öffnung hier integrieren (SmartInvs/Floodgate Forms).");
+            reporter.sendMessage("Usage: /report <player> [CHEATING|INSULT|BUGUSING|GRIEFING|SPAM|OTHER] [text]");
             return true;
         }
 
         String targetName = args[0];
+        ReportTemplate template = parseTemplate(args.length > 1 ? args[1] : "OTHER");
+        String customText = args.length > 2 ? String.join(" ", java.util.Arrays.copyOfRange(args, 2, args.length)) : "";
+
         Player onlineTarget = Bukkit.getPlayerExact(targetName);
         if (onlineTarget != null) {
-            createAndConfirm(reporter, onlineTarget.getUniqueId(), onlineTarget.getName());
+            createAndConfirm(reporter, onlineTarget.getUniqueId(), onlineTarget.getName(), template, customText);
             return true;
         }
 
@@ -51,8 +55,8 @@ public class ReportCommand implements CommandExecutor {
                         reporter.getName(),
                         uuid,
                         targetName,
-                        ReportTemplate.OTHER,
-                        "Manual /report submission",
+                        template,
+                        customText,
                         reporter.getServer().getName()
                 )))
                 .thenAccept(reportId -> reporter.sendMessage("Dein Report wurde aufgenommen. ID: " + reportId))
@@ -63,14 +67,22 @@ public class ReportCommand implements CommandExecutor {
         return true;
     }
 
-    private void createAndConfirm(Player reporter, UUID reportedUuid, String reportedName) {
+    private ReportTemplate parseTemplate(String raw) {
+        try {
+            return ReportTemplate.valueOf(raw.toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException ignored) {
+            return ReportTemplate.OTHER;
+        }
+    }
+
+    private void createAndConfirm(Player reporter, UUID reportedUuid, String reportedName, ReportTemplate template, String customText) {
         reportService.createReport(new ReportCreateRequest(
                 reporter.getUniqueId(),
                 reporter.getName(),
                 reportedUuid,
                 reportedName,
-                ReportTemplate.OTHER,
-                "Manual /report submission",
+                template,
+                customText,
                 reporter.getServer().getName()
         )).thenAccept(reportId -> reporter.sendMessage("Dein Report wurde aufgenommen. ID: " + reportId));
     }

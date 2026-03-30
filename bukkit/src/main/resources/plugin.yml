@@ -1,14 +1,14 @@
 name: ReportSystem
-version: 1.0.0
+version: 2.0.0
 main: de.interwebmedia.report.bukkit.ReportBukkitPlugin
 api-version: '1.21'
 commands:
   report:
-    description: Create and manage reports
-    usage: /report [player]
+    description: Erstellt einen Report
+    usage: /report <spieler> [template] [text]
   reports:
-    description: Opens moderation report management
-    usage: /reports
+    description: Moderations-Interface für Reports
+    usage: /reports [resolve|reject|details|stats]
 permissions:
   report.admin:
     description: Access to report administration
